@@ -1,3 +1,3 @@
-import offers from './data.js';
+// import offers from './data.js';
 
-console.log(offers);
+// console.log(offers);
