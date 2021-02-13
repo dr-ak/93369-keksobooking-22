@@ -9,9 +9,12 @@ const  flatTypes = {
   'house': 'Дом',
   'palace': 'Дворец',
 };
-let cards = [];
 
-offers.forEach(({author, offer}) => {
+const cards = [];
+
+const createElement = (data) => {
+  const author = data.author;
+  const offer = data.offer;
   const card = cardTemplate.cloneNode(true);
   card.querySelector('.popup__avatar').src = author.avatar;
   card.querySelector('.popup__title').textContent = offer.title;
@@ -20,20 +23,14 @@ offers.forEach(({author, offer}) => {
   card.querySelector('.popup__type').textContent = flatTypes[offer.type];
   card.querySelector('.popup__text--capacity').textContent = offer.rooms + ' комнаты для ' + offer.quests + ' гостей';
   card.querySelector('.popup__text--time').textContent = 'Заезд после ' + offer.checkin + ', выезд до ' + offer.checkout;
-  const cardFeatures = card.querySelector('.popup__features').children;
-  const isContainFeature = (cardFeature) => {
-    for (const feature of offer.features) {
-      if (cardFeature.classList.contains('popup__feature--' + feature)) {
-        return true;
-      }
-    }
-    return false;
-  };
-  for (let i = cardFeatures.length - 1; i >= 0; i--) {
-    if (!isContainFeature(cardFeatures[i])) {
-      cardFeatures[i].remove();
-    }
-  }
+  const cardFeatures = card.querySelector('.popup__features');
+  const cardFeatureTemplate = cardFeatures.querySelector('.popup__feature');
+  cardFeatures.innerHTML = '';
+  offer.features.forEach(feature => {
+    const element = cardFeatureTemplate.cloneNode();
+    element.className = 'popup__feature popup__feature--' + feature;
+    cardFeatures.appendChild(element);
+  });
   card.querySelector('.popup__description').textContent = offer.description;
   const photos = card.querySelector('.popup__photos');
   const photoTemplate = card.querySelector('.popup__photo');
@@ -43,8 +40,11 @@ offers.forEach(({author, offer}) => {
     photos.appendChild(photo);
   });
   photoTemplate.remove();
-  cards.push(card);
+  return card;
+};
+
+offers.forEach(offer => {
+  cards.push(createElement(offer));
 });
 
-// console.log(cards);
 mapCanvas.appendChild(cards[0]);
