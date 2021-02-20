@@ -5,6 +5,7 @@
   <link rel="stylesheet" href="css/normalize.css">
   <link rel="stylesheet" href="css/style.css">
   <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css">
   <title>Кексобукинг</title>
 </head>
 <body>
@@ -90,7 +91,7 @@
         </fieldset>
         <fieldset class="ad-form__element ad-form__element--wide">
           <label class="ad-form__label" for="address">Адрес (координаты)</label>
-          <input id="address" name="address" type="text">
+          <input id="address" name="address" type="text" disabled>
         </fieldset>
         <fieldset class="ad-form__element">
           <label class="ad-form__label" for="type">Тип жилья</label>
@@ -227,8 +228,9 @@
       <button type="button" class="error__button">Попробовать снова</button>
     </div>
   </template>
-
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
   <script src="js/main.js" type="module"></script>
+  <script src="js/map.js" type="module"></script>
   <script src="js/cards-creator.js" type="module"></script>
   <script src="js/add-offer-form.js" type="module"></script>
 </body>
