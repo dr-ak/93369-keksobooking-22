@@ -1,6 +1,3 @@
-import offers from './data.js';
-
-const mapCanvas = document.querySelector('#map-canvas');
 const cardTemplate = document.querySelector('#card').content.querySelector('.popup');
 
 const  flatTypes = {
@@ -10,9 +7,7 @@ const  flatTypes = {
   'palace': 'Дворец',
 };
 
-const cards = [];
-
-const createElement = (data) => {
+export default (data) => {
   const author = data.author;
   const offer = data.offer;
   const card = cardTemplate.cloneNode(true);
@@ -42,9 +37,3 @@ const createElement = (data) => {
   photoTemplate.remove();
   return card;
 };
-
-offers.forEach(offer => {
-  cards.push(createElement(offer));
-});
-
-mapCanvas.appendChild(cards[0]);
