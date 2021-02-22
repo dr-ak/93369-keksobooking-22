@@ -35,6 +35,8 @@ const formActivate = () => {
 const LAT = 35.6596;
 const LNG = 139.783;
 
+address.value = LAT + ', ' + LNG;
+
 /* global L:readonly */
 const map = L.map('map-canvas')
   .on('load', formActivate)
