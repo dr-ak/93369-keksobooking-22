@@ -1,6 +1,12 @@
 import {sendData} from './api.js';
 import {showBadRequestMessage, showSuccessRequestMessage} from './message.js';
 
+const MIN_NAME_LENGTH = 30;
+const MAX_NAME_LENGTH = 100;
+const timeIn = form.querySelector('#timein');
+const timeOut = form.querySelector('#timeout');
+const roomNumber = document.querySelector('#room_number');
+const capacity = document.querySelector('#capacity');
 const form = document.querySelector('.ad-form');
 const type = form.querySelector('#type');
 const price = form.querySelector('#price');
@@ -26,9 +32,6 @@ type.addEventListener('change', () => {
   price.placeholder = minPrice;
 });
 
-const timeIn = form.querySelector('#timein');
-const timeOut = form.querySelector('#timeout');
-
 timeIn.addEventListener('change', () => {
   timeOut.options[timeIn.selectedIndex].selected = true;
 });
@@ -38,8 +41,6 @@ timeOut.addEventListener('change', () => {
 });
 
 const title = document.querySelector('#title');
-const MIN_NAME_LENGTH = 30;
-const MAX_NAME_LENGTH = 100;
 
 title.addEventListener('invalid', () => {
   if (title.validity.valueMissing) {
@@ -59,9 +60,6 @@ title.addEventListener('input', () => {
     title.setCustomValidity('');
   }
 });
-
-const roomNumber = document.querySelector('#room_number');
-const capacity = document.querySelector('#capacity');
 
 const checkRoomNumber = () => {
   switch (roomNumber.value) {

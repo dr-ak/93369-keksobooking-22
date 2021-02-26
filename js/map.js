@@ -2,6 +2,8 @@ import {getData} from './api.js';
 import {showBadDataMessage} from './message.js'
 import createElement from './card-creator.js';
 
+const LAT = 35.6596;
+const LNG = 139.783;
 const adForm = document.querySelector('.ad-form');
 const adFormElements = adForm.querySelectorAll('.ad-form__element');
 const address = adForm.querySelector('#address');
@@ -32,9 +34,6 @@ const formActivate = () => {
   mapFeatures.disabled = false;
   enabledArrOfElements(mapFilters);
 };
-
-const LAT = 35.6596;
-const LNG = 139.783;
 
 address.value = LAT + ', ' + LNG;
 
