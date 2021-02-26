@@ -1,5 +1,9 @@
-const type = document.querySelector('#type');
-const price = document.querySelector('#price');
+import {sendData} from './api.js';
+import {showBadRequestMessage, showSuccessRequestMessage} from './message.js';
+
+const form = document.querySelector('.ad-form');
+const type = form.querySelector('#type');
+const price = form.querySelector('#price');
 const minPriceValues = {
   'Бунгало': 0,
   'Квартира': 1000,
@@ -7,14 +11,23 @@ const minPriceValues = {
   'Дворец': 10000,
 }
 
+form.addEventListener('submit', (evt) => {
+  evt.preventDefault();
+  sendData(
+    () => showSuccessRequestMessage(),
+    () => showBadRequestMessage(),
+    new FormData(evt.target),
+  );
+});
+
 type.addEventListener('change', () => {
   const minPrice = minPriceValues[type.options[type.selectedIndex].text];
   price.min = minPrice;
   price.placeholder = minPrice;
 });
 
-const timeIn = document.querySelector('#timein');
-const timeOut = document.querySelector('#timeout');
+const timeIn = form.querySelector('#timein');
+const timeOut = form.querySelector('#timeout');
 
 timeIn.addEventListener('change', () => {
   timeOut.options[timeIn.selectedIndex].selected = true;
@@ -89,3 +102,5 @@ roomNumber.addEventListener('change', () => {
 capacity.addEventListener('change', () => {
   checkRoomNumber();
 });
+
+

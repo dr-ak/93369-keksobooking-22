@@ -1,4 +1,5 @@
-import offers from './data.js';
+import {getData} from './api.js';
+import {showBadDataMessage} from './message.js'
 import createElement from './card-creator.js';
 
 const adForm = document.querySelector('.ad-form');
@@ -71,25 +72,44 @@ const mainPin = L.marker([LAT, LNG], {draggable: true, icon: mainPinIcon})
     address.value = lat + ', ' + lng;
   });
 
-offers.forEach(offer => {
-  const icon = L.icon ({
-    iconUrl: '../leaflet/images/marker-icon.png',
-    shadowUrl: '../leaflet/images/marker-shadow.png',
+const formReset = () => {
+  adForm.reset();
+  address.value = LAT + ', ' + LNG;
+  map.setView([LAT, LNG], 12);
+  mainPin.setLatLng([LAT, LNG]);
+};
 
-    iconSize:     [25, 41],
-    shadowSize:   [41, 41],
-    iconAnchor:   [12, 41],
-    shadowAnchor: [13, 41],
-  });
-  const lat = offer.location.x;
-  const lng = offer.location.y;
-  L.marker([lat, lng], {icon: icon})
-    .addTo(map)
-    .bindPopup(
-      createElement(offer),
-      {
-        keepInView: true,
-      },
-    );
+adForm.querySelector('.ad-form__reset').addEventListener('click', (evt) => {
+  evt.preventDefault();
+  formReset();
 });
+
+
+getData((offers) => {
+  offers.forEach(offer => {
+    const icon = L.icon ({
+      iconUrl: '../leaflet/images/marker-icon.png',
+      shadowUrl: '../leaflet/images/marker-shadow.png',
+
+      iconSize:     [25, 41],
+      shadowSize:   [41, 41],
+      iconAnchor:   [12, 41],
+      shadowAnchor: [13, 41],
+    });
+    L.marker([offer.location.lat, offer.location.lng], {icon: icon})
+      .addTo(map)
+      .bindPopup(
+        createElement(offer),
+        {
+          keepInView: true,
+        },
+      );
+  });
+}, showBadDataMessage);
+
+const filterMapReset = () => {
+  document.querySelector('.map__filters').reset();
+};
+
+export {filterMapReset, formReset};
 
