@@ -18,19 +18,6 @@ const escHandler = elem => {
   window.addEventListener('keydown', downEscKey);
 };
 
-const showBadDataMessage = () => {
-  error.querySelector('.error__message').textContent = 'При загрузке данных произошла ошибка!';
-  const errorButton = error.querySelector('.error__button');
-  errorButton.textContent = 'Продолжить';
-  main.appendChild(error);
-  errorButton.addEventListener('click', (evt) => {
-    evt.preventDefault();
-    error.remove();
-    window.removeEventListener('keydown', downKey);
-  });
-  escHandler(error);
-};
-
 const showBadMessage = (text, buttonName) => {
   error.querySelector('.error__message').textContent = text;
   const errorButton = error.querySelector('.error__button');
