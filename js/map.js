@@ -1,5 +1,5 @@
 import {getData} from './api.js';
-import {showBadDataMessage} from './message.js'
+import {showBadMessage} from './message.js'
 import createElement from './card-creator.js';
 
 const LAT = 35.6596;
@@ -104,7 +104,7 @@ getData((offers) => {
         },
       );
   });
-}, showBadDataMessage);
+}, () => showBadMessage('При загрузке данных произошла ошибка!', 'Продолжить'));
 
 const filterMapReset = () => {
   document.querySelector('.map__filters').reset();

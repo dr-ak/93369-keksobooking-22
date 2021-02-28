@@ -1,13 +1,13 @@
 import {sendData} from './api.js';
-import {showBadRequestMessage, showSuccessRequestMessage} from './message.js';
+import {showBadMessage, showSuccessRequestMessage} from './message.js';
 
 const MIN_NAME_LENGTH = 30;
 const MAX_NAME_LENGTH = 100;
+const form = document.querySelector('.ad-form');
 const timeIn = form.querySelector('#timein');
 const timeOut = form.querySelector('#timeout');
 const roomNumber = document.querySelector('#room_number');
 const capacity = document.querySelector('#capacity');
-const form = document.querySelector('.ad-form');
 const type = form.querySelector('#type');
 const price = form.querySelector('#price');
 const minPriceValues = {
@@ -21,7 +21,7 @@ form.addEventListener('submit', (evt) => {
   evt.preventDefault();
   sendData(
     () => showSuccessRequestMessage(),
-    () => showBadRequestMessage(),
+    () => showBadMessage('Ошибка размещения объявления!', 'Попробовать снова'),
     new FormData(evt.target),
   );
 });
