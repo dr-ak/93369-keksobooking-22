@@ -1,5 +1,15 @@
-const type = document.querySelector('#type');
-const price = document.querySelector('#price');
+import {sendData} from './api.js';
+import {showBadMessage, showSuccessRequestMessage} from './message.js';
+
+const MIN_NAME_LENGTH = 30;
+const MAX_NAME_LENGTH = 100;
+const form = document.querySelector('.ad-form');
+const timeIn = form.querySelector('#timein');
+const timeOut = form.querySelector('#timeout');
+const roomNumber = document.querySelector('#room_number');
+const capacity = document.querySelector('#capacity');
+const type = form.querySelector('#type');
+const price = form.querySelector('#price');
 const minPriceValues = {
   'Бунгало': 0,
   'Квартира': 1000,
@@ -7,14 +17,20 @@ const minPriceValues = {
   'Дворец': 10000,
 }
 
+form.addEventListener('submit', (evt) => {
+  evt.preventDefault();
+  sendData(
+    () => showSuccessRequestMessage(),
+    () => showBadMessage('Ошибка размещения объявления!', 'Попробовать снова'),
+    new FormData(evt.target),
+  );
+});
+
 type.addEventListener('change', () => {
   const minPrice = minPriceValues[type.options[type.selectedIndex].text];
   price.min = minPrice;
   price.placeholder = minPrice;
 });
-
-const timeIn = document.querySelector('#timein');
-const timeOut = document.querySelector('#timeout');
 
 timeIn.addEventListener('change', () => {
   timeOut.options[timeIn.selectedIndex].selected = true;
@@ -25,8 +41,6 @@ timeOut.addEventListener('change', () => {
 });
 
 const title = document.querySelector('#title');
-const MIN_NAME_LENGTH = 30;
-const MAX_NAME_LENGTH = 100;
 
 title.addEventListener('invalid', () => {
   if (title.validity.valueMissing) {
@@ -46,9 +60,6 @@ title.addEventListener('input', () => {
     title.setCustomValidity('');
   }
 });
-
-const roomNumber = document.querySelector('#room_number');
-const capacity = document.querySelector('#capacity');
 
 const checkRoomNumber = () => {
   switch (roomNumber.value) {
@@ -89,3 +100,5 @@ roomNumber.addEventListener('change', () => {
 capacity.addEventListener('change', () => {
   checkRoomNumber();
 });
+
+
