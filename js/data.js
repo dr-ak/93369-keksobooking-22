@@ -23,7 +23,7 @@ const createOffer = () => {
       price: getRandomIntFromRange(1000, 1000000),
       type: getRandomElement(offerTypes),
       rooms: getRandomIntFromRange(1, 15),
-      quests: getRandomIntFromRange(1, 30),
+      guests: getRandomIntFromRange(1, 30),
       checkin: getRandomElement(timePoints),
       checkout: getRandomElement(timePoints),
       features: offerFeatures.filter(() => getRandomIntFromRange(0, 1)),

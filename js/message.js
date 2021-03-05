@@ -6,16 +6,15 @@ const error = errorTemplate.cloneNode(true);
 const successTemplate = document.querySelector('#success').content.querySelector('.success');
 const success = successTemplate.cloneNode(true);
 
-let downKey = null;
-const escHandler = elem => {
-  const downEscKey = evt => {
+let keyDownHandler = null;
+const setEscHandler = elem => {
+  keyDownHandler = evt => {
     if (evt.keyCode === 27) {
       elem.remove();
-      window.removeEventListener('keydown', downEscKey);
+      window.removeEventListener('keydown', keyDownHandler);
     }
   };
-  downKey = downEscKey;
-  window.addEventListener('keydown', downEscKey);
+  window.addEventListener('keydown', keyDownHandler);
 };
 
 const showBadMessage = (text, buttonName) => {
@@ -26,14 +25,14 @@ const showBadMessage = (text, buttonName) => {
   errorButton.addEventListener('click', (evt) => {
     evt.preventDefault();
     error.remove();
-    window.removeEventListener('keydown', downKey);
+    window.removeEventListener('keydown', keyDownHandler);
   });
-  escHandler(error);
+  setEscHandler(error);
 };
 
 const showSuccessRequestMessage = () => {
   main.appendChild(success);
-  escHandler(success);
+  setEscHandler(success);
   filterMapReset();
   formReset();
 };
