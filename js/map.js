@@ -4,12 +4,35 @@ import createElement from './card-creator.js';
 
 const LAT = 35.6596;
 const LNG = 139.783;
+const OFFER_COUNT = 10;
 const adForm = document.querySelector('.ad-form');
 const adFormElements = adForm.querySelectorAll('.ad-form__element');
 const address = adForm.querySelector('#address');
 const mapFiltersForm = document.querySelector('.map__filters');
 const mapFilters = mapFiltersForm.querySelectorAll('.map__filter');
 const mapFeatures = mapFiltersForm.querySelector('.map__features');
+const filter = {
+  type: 'any',
+  price: 'any',
+  rooms: 'any',
+  guests: 'any',
+  options: [],
+  setFilter: () => {
+    filter.type = mapFiltersForm.querySelector('#housing-type').value;
+    filter.price = mapFiltersForm.querySelector('#housing-price').value;
+    filter.rooms = mapFiltersForm.querySelector('#housing-rooms').value;
+    filter.guests = mapFiltersForm.querySelector('#housing-guests').value;
+    filter.setOptions();
+  },
+  setOptions: () => {
+    filter.options = [];
+    for (const checkbox of mapFiltersForm.querySelectorAll('.map__checkbox')) {
+      if (checkbox.checked) {
+        filter.options.push(checkbox.value)
+      }
+    }
+  },
+};
 const disabledArrOfElements = arr => {
   for (const element of arr) {
     element.disabled = true;
@@ -60,7 +83,6 @@ const mainPinIcon = L.icon({
   shadowSize:   [41, 41],
   iconAnchor:   [25, 82],
   shadowAnchor: [13, 41],
-  // popupAnchor:  [-3, -76],// point from which the popup should open relative to the iconAnchor
 });
 
 const mainPin = L.marker([LAT, LNG], {draggable: true, icon: mainPinIcon})
@@ -83,32 +105,69 @@ adForm.querySelector('.ad-form__reset').addEventListener('click', (evt) => {
   formReset();
 });
 
+let layerGroup = null;
+const processOfferList = (offers) => {
+  const markers = [];
+  offers
+    .slice(0, OFFER_COUNT)
+    .forEach(offer => {
+      const icon = L.icon ({
+        iconUrl: '../leaflet/images/marker-icon.png',
+        shadowUrl: '../leaflet/images/marker-shadow.png',
 
-getData((offers) => {
-  offers.forEach(offer => {
-    const icon = L.icon ({
-      iconUrl: '../leaflet/images/marker-icon.png',
-      shadowUrl: '../leaflet/images/marker-shadow.png',
-
-      iconSize:     [25, 41],
-      shadowSize:   [41, 41],
-      iconAnchor:   [12, 41],
-      shadowAnchor: [13, 41],
+        iconSize:     [25, 41],
+        shadowSize:   [41, 41],
+        iconAnchor:   [12, 41],
+        shadowAnchor: [13, 41],
+      });
+      const marker = L.marker([offer.location.lat, offer.location.lng], {icon: icon})
+        // .addTo(map)
+        .bindPopup(
+          createElement(offer),
+          {
+            keepInView: true,
+          },
+        );
+      markers.push(marker);
     });
-    L.marker([offer.location.lat, offer.location.lng], {icon: icon})
-      .addTo(map)
-      .bindPopup(
-        createElement(offer),
-        {
-          keepInView: true,
-        },
-      );
-  });
+  layerGroup = L.layerGroup(markers).addTo(map);
+};
+
+const offerList = getData((offers) => {
+  processOfferList(offers);
 }, () => showBadMessage('При загрузке данных произошла ошибка!', 'Продолжить'));
+
+mapFiltersForm.addEventListener('change', () => {
+  filter.setFilter();
+  layerGroup.remove();
+  offerList
+    .then(offers => {
+      return offers.filter(offer => {
+        if (filter.type !== 'any' && offer.offer.type !== filter.type
+        || filter.price === 'low' && offer.offer.price >= 10000
+        || filter.price === 'middle' && (offer.offer.price < 10000 || offer.offer.price >= 50000)
+        || filter.price === 'high' && offer.offer.price < 50000
+        || filter.rooms !== 'any' && offer.offer.rooms !== Number(filter.rooms)
+        || filter.guests !== 'any' && Number(filter.guests) > offer.offer.guests
+        || Number(filter.guests) === 0 && offer.offer.guests !== 0) {
+          return false;
+        }
+        for (const option of filter.options) {
+          if (!offer.offer.features.includes(option)) {
+            return false;
+          }
+        }
+        return true;
+      });
+    })
+    .then(offers => {
+      processOfferList(offers);
+      map.setView([LAT, LNG], 12);
+    });
+});
 
 const filterMapReset = () => {
   document.querySelector('.map__filters').reset();
 };
 
 export {filterMapReset, formReset};
-

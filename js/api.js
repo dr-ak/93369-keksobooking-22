@@ -1,14 +1,17 @@
 const getData = (onSuccess, onFail) => {
-  fetch('https://22.javascript.pages.academy/keksobooking/data')
+  return fetch('https://22.javascript.pages.academy/keksobooking/data')
     .then((response) => {
-      if (response.ok) {
-        response.json()
-          .then((offers) => {
-            onSuccess(offers);
-          });
-      } else {
+      if (!response.ok) {
         onFail();
       }
+      return response.json();
+    })
+    .then(offers => {
+      onSuccess(offers);
+      return offers;
+    })
+    .catch(() => {
+      onFail();
     });
 };
 
