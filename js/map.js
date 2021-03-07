@@ -5,12 +5,17 @@ import createElement from './card-creator.js';
 const LAT = 35.6596;
 const LNG = 139.783;
 const OFFER_COUNT = 10;
+const PROCESS_DELAY = 500;
 const adForm = document.querySelector('.ad-form');
 const adFormElements = adForm.querySelectorAll('.ad-form__element');
 const address = adForm.querySelector('#address');
 const mapFiltersForm = document.querySelector('.map__filters');
 const mapFilters = mapFiltersForm.querySelectorAll('.map__filter');
 const mapFeatures = mapFiltersForm.querySelector('.map__features');
+const type = mapFiltersForm.querySelector('#housing-type');
+const price = mapFiltersForm.querySelector('#housing-price');
+const rooms = mapFiltersForm.querySelector('#housing-rooms');
+const guests = mapFiltersForm.querySelector('#housing-guests');
 const filter = {
   type: 'any',
   price: 'any',
@@ -18,10 +23,10 @@ const filter = {
   guests: 'any',
   options: [],
   setFilter: () => {
-    filter.type = mapFiltersForm.querySelector('#housing-type').value;
-    filter.price = mapFiltersForm.querySelector('#housing-price').value;
-    filter.rooms = mapFiltersForm.querySelector('#housing-rooms').value;
-    filter.guests = mapFiltersForm.querySelector('#housing-guests').value;
+    filter.type = type.value;
+    filter.price = price.value;
+    filter.rooms = rooms.value;
+    filter.guests = guests.value;
     filter.setOptions();
   },
   setOptions: () => {
@@ -137,34 +142,25 @@ const offerList = getData((offers) => {
   processOfferList(offers);
 }, () => showBadMessage('При загрузке данных произошла ошибка!', 'Продолжить'));
 
-mapFiltersForm.addEventListener('change', () => {
+/* global _:readonly */
+mapFiltersForm.addEventListener('change', _.debounce(() => {
   filter.setFilter();
   layerGroup.remove();
   offerList
-    .then(offers => {
-      return offers.filter(offer => {
-        if (filter.type !== 'any' && offer.offer.type !== filter.type
-        || filter.price === 'low' && offer.offer.price >= 10000
-        || filter.price === 'middle' && (offer.offer.price < 10000 || offer.offer.price >= 50000)
-        || filter.price === 'high' && offer.offer.price < 50000
-        || filter.rooms !== 'any' && offer.offer.rooms !== Number(filter.rooms)
-        || filter.guests !== 'any' && Number(filter.guests) > offer.offer.guests
-        || Number(filter.guests) === 0 && offer.offer.guests !== 0) {
-          return false;
-        }
-        for (const option of filter.options) {
-          if (!offer.offer.features.includes(option)) {
-            return false;
-          }
-        }
-        return true;
-      });
-    })
+    .then(offers => offers.filter(offer =>
+      !(filter.type !== 'any' && offer.offer.type !== filter.type
+      || filter.price === 'low' && offer.offer.price >= 10000
+      || filter.price === 'middle' && (offer.offer.price < 10000 || offer.offer.price >= 50000)
+      || filter.price === 'high' && offer.offer.price < 50000
+      || filter.rooms !== 'any' && offer.offer.rooms !== Number(filter.rooms)
+      || filter.guests !== 'any' && Number(filter.guests) > offer.offer.guests
+      || Number(filter.guests) === 0 && offer.offer.guests !== 0
+      || !filter.options.every(option => offer.offer.features.includes(option)))))
     .then(offers => {
       processOfferList(offers);
       map.setView([LAT, LNG], 12);
     });
-});
+}, PROCESS_DELAY));
 
 const filterMapReset = () => {
   document.querySelector('.map__filters').reset();
