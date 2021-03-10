@@ -1,5 +1,6 @@
 import {getData} from './api.js';
 import {showBadMessage} from './message.js'
+import {cleanPhoto} from './photo-uploader.js'
 import createElement from './card-creator.js';
 
 const LAT = 35.6596;
@@ -108,6 +109,7 @@ const formReset = () => {
 adForm.querySelector('.ad-form__reset').addEventListener('click', (evt) => {
   evt.preventDefault();
   formReset();
+  cleanPhoto();
 });
 
 let layerGroup = null;
