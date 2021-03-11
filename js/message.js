@@ -1,4 +1,5 @@
 import {filterMapReset, formReset} from './map.js';
+import {cleanPhoto} from './photo-uploader.js';
 
 const main = document.querySelector('main');
 const errorTemplate = document.querySelector('#error').content.querySelector('.error');
@@ -35,6 +36,7 @@ const showSuccessRequestMessage = () => {
   setEscHandler(success);
   filterMapReset();
   formReset();
+  cleanPhoto();
 };
 
 
