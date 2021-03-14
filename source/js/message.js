@@ -1,6 +1,7 @@
 import {filterMapReset, formReset} from './map.js';
 import {cleanPhoto} from './photo-uploader.js';
 
+const ESC_KEY = 27;
 const main = document.querySelector('main');
 const errorTemplate = document.querySelector('#error').content.querySelector('.error');
 const error = errorTemplate.cloneNode(true);
@@ -10,7 +11,7 @@ const success = successTemplate.cloneNode(true);
 let keyDownHandler = null;
 const setEscHandler = elem => {
   keyDownHandler = evt => {
-    if (evt.keyCode === 27) {
+    if (evt.keyCode === ESC_KEY) {
       elem.remove();
       window.removeEventListener('keydown', keyDownHandler);
     }

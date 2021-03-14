@@ -40,9 +40,7 @@ imageFileChooser.addEventListener('change', () => {
 
 const cleanPhoto = () => {
   avatarPreview.src = 'img/muffin-grey.svg';
-  for (let i = imagePreview.children.length - 1; i >= 0; i--) {
-    imagePreview.removeChild(imagePreview.children[0]);
-  }
+  imagePreview.innerHTML = '';
 };
 
 export {cleanPhoto};

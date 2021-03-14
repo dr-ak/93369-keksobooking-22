@@ -1,5 +1,7 @@
+const SERVER = 'https://22.javascript.pages.academy/keksobooking';
+
 const getData = (onSuccess, onFail) => {
-  return fetch('https://22.javascript.pages.academy/keksobooking/data')
+  return fetch(SERVER + '/data')
     .then((response) => {
       if (!response.ok) {
         onFail();
@@ -17,7 +19,7 @@ const getData = (onSuccess, onFail) => {
 
 const sendData = (onSuccess, onFail, body) => {
   fetch(
-    'https://22.javascript.pages.academy/keksobooking',
+    SERVER,
     {
       method: 'POST',
       body,

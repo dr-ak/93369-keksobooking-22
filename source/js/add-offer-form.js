@@ -3,6 +3,8 @@ import {showBadMessage, showSuccessRequestMessage} from './message.js';
 
 const MIN_NAME_LENGTH = 30;
 const MAX_NAME_LENGTH = 100;
+const ADD_OFFER_ERROR_MESSAGE = 'Ошибка размещения объявления!';
+const ADD_OFFER_ERROR_BUTTON = 'Попробовать снова';
 const form = document.querySelector('.ad-form');
 const timeIn = form.querySelector('#timein');
 const timeOut = form.querySelector('#timeout');
@@ -10,7 +12,7 @@ const roomNumber = document.querySelector('#room_number');
 const capacity = document.querySelector('#capacity');
 const type = form.querySelector('#type');
 const price = form.querySelector('#price');
-const minPriceValues = {
+const MinPriceValues = {
   'Бунгало': 0,
   'Квартира': 1000,
   'Дом': 5000,
@@ -21,13 +23,13 @@ form.addEventListener('submit', (evt) => {
   evt.preventDefault();
   sendData(
     () => showSuccessRequestMessage(),
-    () => showBadMessage('Ошибка размещения объявления!', 'Попробовать снова'),
+    () => showBadMessage(ADD_OFFER_ERROR_MESSAGE, ADD_OFFER_ERROR_BUTTON),
     new FormData(evt.target),
   );
 });
 
 type.addEventListener('change', () => {
-  const minPrice = minPriceValues[type.options[type.selectedIndex].text];
+  const minPrice = MinPriceValues[type.options[type.selectedIndex].text];
   price.min = minPrice;
   price.placeholder = minPrice;
 });

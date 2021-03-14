@@ -3,10 +3,41 @@ import {showBadMessage} from './message.js'
 import {cleanPhoto} from './photo-uploader.js'
 import createElement from './card-creator.js';
 
+const FILTER_DEFAULT_VALUE = 'any';
+const FILTER_LOW_PRICE_SYMBOL = 'low';
+const FILTER_LOW_PRICE_NUMBER = 10000;
+const FILTER_MIDDLE_PRICE_SYMBOL = 'middle';
+const FILTER_HIGH_PRICE_SYMBOL = 'high';
+const FILTER_HIGH_PRICE_NUMBER = 50000;
+const LEAFLET_TILE_LAYER = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+const LEAFLET_TILE_LAYER_ATTRIBUTION = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>';
 const LAT = 35.6596;
 const LNG = 139.783;
 const OFFER_COUNT = 10;
 const PROCESS_DELAY = 500;
+const MAIN_ICON_SIZE_X = 50;
+const MAIN_ICON_SIZE_Y = 82;
+const MAIN_SHADOW_SIXE_X = 41;
+const MAIN_SHADOW_SIXE_Y = 41;
+const MAIN_ICON_ANCHOR_X = 25;
+const MAIN_ICON_ANCHOR_Y = 82;
+const MAIN_SHADOW_ANCHOR_X = 13;
+const MAIN_SHADOW_ANCHOR_Y = 41;
+const ICON_SIZE_X = 25;
+const ICON_SIZE_Y = 41;
+const SHADOW_SIXE_X = 41;
+const SHADOW_SIXE_Y = 41;
+const ICON_ANCHOR_X = 12;
+const ICON_ANCHOR_Y = 41;
+const SHADOW_ANCHOR_X = 13;
+const SHADOW_ANCHOR_Y = 41;
+const ICON_DIR = '../leaflet/images/';
+const MAIN_MARKER_ICON = 'marker-icon-2x.png';
+const MAIN_MARKER_SHADOW = 'marker-shadow.png';
+const MARKER_ICON = 'marker-icon.png';
+const MARKER_SHADOW = 'marker-shadow.png';
+const DOWNLOAD_ERROR_MESSAGE = 'При загрузке данных произошла ошибка!';
+const DOWNLOAD_ERROR_BUTTON = 'Продолжить';
 const adForm = document.querySelector('.ad-form');
 const adFormElements = adForm.querySelectorAll('.ad-form__element');
 const address = adForm.querySelector('#address');
@@ -18,10 +49,10 @@ const price = mapFiltersForm.querySelector('#housing-price');
 const rooms = mapFiltersForm.querySelector('#housing-rooms');
 const guests = mapFiltersForm.querySelector('#housing-guests');
 const filter = {
-  type: 'any',
-  price: 'any',
-  rooms: 'any',
-  guests: 'any',
+  type: FILTER_DEFAULT_VALUE,
+  price: FILTER_DEFAULT_VALUE,
+  rooms: FILTER_DEFAULT_VALUE,
+  guests: FILTER_DEFAULT_VALUE,
   options: [],
   setFilter: () => {
     filter.type = type.value;
@@ -75,20 +106,20 @@ const map = L.map('map-canvas')
   }, 12);
 
 L.tileLayer(
-  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+  LEAFLET_TILE_LAYER,
   {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>',
+    attribution: LEAFLET_TILE_LAYER_ATTRIBUTION,
   },
 ).addTo(map);
 
 const mainPinIcon = L.icon({
-  iconUrl: '../leaflet/images/marker-icon-2x.png',
-  shadowUrl: '../leaflet/images/marker-shadow.png',
+  iconUrl: ICON_DIR + MAIN_MARKER_ICON,
+  shadowUrl: ICON_DIR + MAIN_MARKER_SHADOW,
 
-  iconSize:     [50, 82],
-  shadowSize:   [41, 41],
-  iconAnchor:   [25, 82],
-  shadowAnchor: [13, 41],
+  iconSize:     [MAIN_ICON_SIZE_X, MAIN_ICON_SIZE_Y],
+  shadowSize:   [MAIN_SHADOW_SIXE_X, MAIN_SHADOW_SIXE_Y],
+  iconAnchor:   [MAIN_ICON_ANCHOR_X, MAIN_ICON_ANCHOR_Y],
+  shadowAnchor: [MAIN_SHADOW_ANCHOR_X, MAIN_SHADOW_ANCHOR_Y],
 });
 
 const mainPin = L.marker([LAT, LNG], {draggable: true, icon: mainPinIcon})
@@ -119,16 +150,15 @@ const processOfferList = (offers) => {
     .slice(0, OFFER_COUNT)
     .forEach(offer => {
       const icon = L.icon ({
-        iconUrl: '../leaflet/images/marker-icon.png',
-        shadowUrl: '../leaflet/images/marker-shadow.png',
+        iconUrl: ICON_DIR + MARKER_ICON,
+        shadowUrl: ICON_DIR + MARKER_SHADOW,
 
-        iconSize:     [25, 41],
-        shadowSize:   [41, 41],
-        iconAnchor:   [12, 41],
-        shadowAnchor: [13, 41],
+        iconSize:     [ICON_SIZE_X, ICON_SIZE_Y],
+        shadowSize:   [SHADOW_SIXE_X, SHADOW_SIXE_Y],
+        iconAnchor:   [ICON_ANCHOR_X, ICON_ANCHOR_Y],
+        shadowAnchor: [SHADOW_ANCHOR_X, SHADOW_ANCHOR_Y],
       });
       const marker = L.marker([offer.location.lat, offer.location.lng], {icon: icon})
-        // .addTo(map)
         .bindPopup(
           createElement(offer),
           {
@@ -142,7 +172,7 @@ const processOfferList = (offers) => {
 
 const offerList = getData((offers) => {
   processOfferList(offers);
-}, () => showBadMessage('При загрузке данных произошла ошибка!', 'Продолжить'));
+}, () => showBadMessage(DOWNLOAD_ERROR_MESSAGE, DOWNLOAD_ERROR_BUTTON));
 
 /* global _:readonly */
 mapFiltersForm.addEventListener('change', _.debounce(() => {
@@ -150,12 +180,12 @@ mapFiltersForm.addEventListener('change', _.debounce(() => {
   layerGroup.remove();
   offerList
     .then(offers => offers.filter(offer =>
-      !(filter.type !== 'any' && offer.offer.type !== filter.type
-      || filter.price === 'low' && offer.offer.price >= 10000
-      || filter.price === 'middle' && (offer.offer.price < 10000 || offer.offer.price >= 50000)
-      || filter.price === 'high' && offer.offer.price < 50000
-      || filter.rooms !== 'any' && offer.offer.rooms !== Number(filter.rooms)
-      || filter.guests !== 'any' && Number(filter.guests) > offer.offer.guests
+      !(filter.type !== FILTER_DEFAULT_VALUE && offer.offer.type !== filter.type
+        || filter.price === FILTER_LOW_PRICE_SYMBOL && offer.offer.price >= FILTER_LOW_PRICE_NUMBER
+        || filter.price === FILTER_MIDDLE_PRICE_SYMBOL && (offer.offer.price < FILTER_LOW_PRICE_NUMBER || offer.offer.price >= FILTER_HIGH_PRICE_NUMBER)
+        || filter.price === FILTER_HIGH_PRICE_SYMBOL && offer.offer.price < FILTER_HIGH_PRICE_NUMBER
+      || filter.rooms !== FILTER_DEFAULT_VALUE && offer.offer.rooms !== Number(filter.rooms)
+      || filter.guests !== FILTER_DEFAULT_VALUE && Number(filter.guests) > offer.offer.guests
       || Number(filter.guests) === 0 && offer.offer.guests !== 0
       || !filter.options.every(option => offer.offer.features.includes(option)))))
     .then(offers => {
