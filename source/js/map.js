@@ -1,6 +1,7 @@
 import {getData} from './api.js';
 import {showBadMessage} from './message.js'
 import {cleanPhoto} from './photo-uploader.js'
+import {formReset} from './add-offer-form.js'
 import createElement from './card-creator.js';
 
 const FILTER_DEFAULT_VALUE = 'any';
@@ -130,8 +131,8 @@ const mainPin = L.marker([LAT, LNG], {draggable: true, icon: mainPinIcon})
     address.value = lat + ', ' + lng;
   });
 
-const formReset = () => {
-  adForm.reset();
+const adFormReset = () => {
+  formReset();
   address.value = LAT + ', ' + LNG;
   map.setView([LAT, LNG], 12);
   mainPin.setLatLng([LAT, LNG]);
@@ -139,7 +140,7 @@ const formReset = () => {
 
 adForm.querySelector('.ad-form__reset').addEventListener('click', (evt) => {
   evt.preventDefault();
-  formReset();
+  adFormReset();
   cleanPhoto();
 });
 
@@ -174,21 +175,34 @@ const offerList = getData((offers) => {
   processOfferList(offers);
 }, () => showBadMessage(DOWNLOAD_ERROR_MESSAGE, DOWNLOAD_ERROR_BUTTON));
 
+const checkHousingType = (offer) => !(filter.type !== FILTER_DEFAULT_VALUE && offer.offer.type !== filter.type);
+const checkHousingPrice = (offer) => !(filter.price === FILTER_LOW_PRICE_SYMBOL && offer.offer.price >= FILTER_LOW_PRICE_NUMBER
+  || filter.price === FILTER_MIDDLE_PRICE_SYMBOL && (offer.offer.price < FILTER_LOW_PRICE_NUMBER || offer.offer.price >= FILTER_HIGH_PRICE_NUMBER)
+  || filter.price === FILTER_HIGH_PRICE_SYMBOL && offer.offer.price < FILTER_HIGH_PRICE_NUMBER);
+const checkHousingRooms = (offer) => !(filter.rooms !== FILTER_DEFAULT_VALUE && offer.offer.rooms !== Number(filter.rooms));
+const checkHousingGuests = (offer) => !(filter.guests !== FILTER_DEFAULT_VALUE && Number(filter.guests) > offer.offer.guests
+  || Number(filter.guests) === 0 && offer.offer.guests !== 0);
+const checkHousingOptions = (offer) => filter.options.every(option => offer.offer.features.includes(option));
+const checkFilters = (offer) => checkHousingType(offer) && checkHousingPrice(offer) && checkHousingRooms(offer) && checkHousingGuests(offer) && checkHousingOptions(offer);
+
 /* global _:readonly */
 mapFiltersForm.addEventListener('change', _.debounce(() => {
   filter.setFilter();
   layerGroup.remove();
   offerList
-    .then(offers => offers.filter(offer =>
-      !(filter.type !== FILTER_DEFAULT_VALUE && offer.offer.type !== filter.type
-        || filter.price === FILTER_LOW_PRICE_SYMBOL && offer.offer.price >= FILTER_LOW_PRICE_NUMBER
-        || filter.price === FILTER_MIDDLE_PRICE_SYMBOL && (offer.offer.price < FILTER_LOW_PRICE_NUMBER || offer.offer.price >= FILTER_HIGH_PRICE_NUMBER)
-        || filter.price === FILTER_HIGH_PRICE_SYMBOL && offer.offer.price < FILTER_HIGH_PRICE_NUMBER
-      || filter.rooms !== FILTER_DEFAULT_VALUE && offer.offer.rooms !== Number(filter.rooms)
-      || filter.guests !== FILTER_DEFAULT_VALUE && Number(filter.guests) > offer.offer.guests
-      || Number(filter.guests) === 0 && offer.offer.guests !== 0
-      || !filter.options.every(option => offer.offer.features.includes(option)))))
-    .then(offers => {
+    .then((offers) => {
+      const sortedOffers = [];
+      for (const offer of offers) {
+        if (checkFilters(offer)) {
+          sortedOffers.push(offer);
+        }
+        if (sortedOffers.length === OFFER_COUNT) {
+          break;
+        }
+      }
+      return sortedOffers;
+    })
+    .then((offers) => {
       processOfferList(offers);
       map.setView([LAT, LNG], 12);
     });
@@ -198,4 +212,4 @@ const filterMapReset = () => {
   document.querySelector('.map__filters').reset();
 };
 
-export {filterMapReset, formReset};
+export {filterMapReset, adFormReset};

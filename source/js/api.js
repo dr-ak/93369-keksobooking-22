@@ -8,7 +8,7 @@ const getData = (onSuccess, onFail) => {
       }
       return response.json();
     })
-    .then(offers => {
+    .then((offers) => {
       onSuccess(offers);
       return offers;
     })

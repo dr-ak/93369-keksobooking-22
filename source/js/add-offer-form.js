@@ -66,32 +66,24 @@ title.addEventListener('input', () => {
 const checkRoomNumber = () => {
   switch (roomNumber.value) {
     case '1':
-      if (capacity.value !== '1') {
-        capacity.setCustomValidity('Количество гостей для 1 комнаты может быть 1!');
-      } else {
-        capacity.setCustomValidity('');
-      }
+      capacity.value !== '1'
+        ? capacity.setCustomValidity('Количество гостей для 1 комнаты может быть 1!')
+        : capacity.setCustomValidity('');
       break;
     case '2':
-      if (!['1', '2'].includes(capacity.value)) {
-        capacity.setCustomValidity('Количество гостей для 2 комнат может быть от 1 до 2!');
-      } else {
-        capacity.setCustomValidity('');
-      }
+      !['1', '2'].includes(capacity.value)
+        ? capacity.setCustomValidity('Количество гостей для 2 комнат может быть от 1 до 2!')
+        : capacity.setCustomValidity('');
       break;
     case '3':
-      if (!['1', '2', '3'].includes(capacity.value)) {
-        capacity.setCustomValidity('Количество гостей для 3 комнат может быть от 1 до 3!');
-      } else {
-        capacity.setCustomValidity('');
-      }
+      !['1', '2', '3'].includes(capacity.value)
+        ? capacity.setCustomValidity('Количество гостей для 3 комнат может быть от 1 до 3!')
+        : capacity.setCustomValidity('');
       break;
     case '100':
-      if (capacity.value !== '0') {
-        capacity.setCustomValidity('100 комнат не для гостей!');
-      } else {
-        capacity.setCustomValidity('');
-      }
+      capacity.value !== '0'
+        ? capacity.setCustomValidity('100 комнат не для гостей!')
+        : capacity.setCustomValidity('');
   }
 };
 
@@ -102,5 +94,14 @@ roomNumber.addEventListener('change', () => {
 capacity.addEventListener('change', () => {
   checkRoomNumber();
 });
+
+const formReset = () => {
+  form.reset();
+  const minPrice = MinPriceValues[type.options[type.selectedIndex].text];
+  price.min = minPrice;
+  price.placeholder = minPrice;
+};
+
+export {formReset};
 
 

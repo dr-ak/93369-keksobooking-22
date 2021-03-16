@@ -21,7 +21,7 @@ export default (data) => {
   const cardFeatures = card.querySelector('.popup__features');
   const cardFeatureTemplate = cardFeatures.querySelector('.popup__feature');
   cardFeatures.innerHTML = '';
-  offer.features.forEach(feature => {
+  offer.features.forEach((feature) => {
     const element = cardFeatureTemplate.cloneNode();
     element.className = 'popup__feature popup__feature--' + feature;
     cardFeatures.appendChild(element);
@@ -29,7 +29,7 @@ export default (data) => {
   card.querySelector('.popup__description').textContent = offer.description;
   const photos = card.querySelector('.popup__photos');
   const photoTemplate = card.querySelector('.popup__photo');
-  offer.photos.forEach(path => {
+  offer.photos.forEach((path) => {
     const photo = photoTemplate.cloneNode();
     photo.src = path;
     photos.appendChild(photo);

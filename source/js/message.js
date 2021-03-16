@@ -1,4 +1,4 @@
-import {filterMapReset, formReset} from './map.js';
+import {filterMapReset, adFormReset} from './map.js';
 import {cleanPhoto} from './photo-uploader.js';
 
 const ESC_KEY = 27;
@@ -9,7 +9,7 @@ const successTemplate = document.querySelector('#success').content.querySelector
 const success = successTemplate.cloneNode(true);
 
 let keyDownHandler = null;
-const setEscHandler = elem => {
+const setEscHandler = (elem) => {
   keyDownHandler = evt => {
     if (evt.keyCode === ESC_KEY) {
       elem.remove();
@@ -24,6 +24,10 @@ const showBadMessage = (text, buttonName) => {
   const errorButton = error.querySelector('.error__button');
   errorButton.textContent = buttonName;
   main.appendChild(error);
+  error.addEventListener('click', (evt) => {
+    evt.preventDefault();
+    error.remove();
+  });
   errorButton.addEventListener('click', (evt) => {
     evt.preventDefault();
     error.remove();
@@ -34,9 +38,13 @@ const showBadMessage = (text, buttonName) => {
 
 const showSuccessRequestMessage = () => {
   main.appendChild(success);
+  success.addEventListener('click', (evt) => {
+    evt.preventDefault();
+    success.remove();
+  });
   setEscHandler(success);
   filterMapReset();
-  formReset();
+  adFormReset();
   cleanPhoto();
 };
 
