@@ -27,6 +27,7 @@ const showBadMessage = (text, buttonName) => {
   error.addEventListener('click', (evt) => {
     evt.preventDefault();
     error.remove();
+    window.removeEventListener('keydown', keyDownHandler);
   });
   errorButton.addEventListener('click', (evt) => {
     evt.preventDefault();
@@ -41,6 +42,7 @@ const showSuccessRequestMessage = () => {
   success.addEventListener('click', (evt) => {
     evt.preventDefault();
     success.remove();
+    window.removeEventListener('keydown', keyDownHandler);
   });
   setEscHandler(success);
   filterMapReset();

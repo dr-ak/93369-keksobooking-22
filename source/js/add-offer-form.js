@@ -66,24 +66,16 @@ title.addEventListener('input', () => {
 const checkRoomNumber = () => {
   switch (roomNumber.value) {
     case '1':
-      capacity.value !== '1'
-        ? capacity.setCustomValidity('Количество гостей для 1 комнаты может быть 1!')
-        : capacity.setCustomValidity('');
+      capacity.setCustomValidity(capacity.value !== '1' ? 'Количество гостей для 1 комнаты может быть 1!' : '');
       break;
     case '2':
-      !['1', '2'].includes(capacity.value)
-        ? capacity.setCustomValidity('Количество гостей для 2 комнат может быть от 1 до 2!')
-        : capacity.setCustomValidity('');
+      capacity.setCustomValidity(!['1', '2'].includes(capacity.value) ? 'Количество гостей для 2 комнат может быть от 1 до 2!' : '');
       break;
     case '3':
-      !['1', '2', '3'].includes(capacity.value)
-        ? capacity.setCustomValidity('Количество гостей для 3 комнат может быть от 1 до 3!')
-        : capacity.setCustomValidity('');
+      capacity.setCustomValidity(!['1', '2', '3'].includes(capacity.value) ? 'Количество гостей для 3 комнат может быть от 1 до 3!' : '');
       break;
     case '100':
-      capacity.value !== '0'
-        ? capacity.setCustomValidity('100 комнат не для гостей!')
-        : capacity.setCustomValidity('');
+      capacity.setCustomValidity(capacity.value !== '0' ? '100 комнат не для гостей!' : '');
   }
 };
 
